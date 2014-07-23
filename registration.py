@@ -1,11 +1,12 @@
 import unittest
-from random import randrange # let's not import the entire module
+from random import randrange  # let's not import the entire module
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from ConfigParser import SafeConfigParser
 
 parser = SafeConfigParser()
 parser.read('inputs.ini')
+
 
 class Registration(unittest.TestCase):
     """
@@ -16,6 +17,7 @@ class Registration(unittest.TestCase):
         pydoc -w registration
 
     """
+
     def setUp(self):
         """
         Attempts to register a new account.
@@ -23,6 +25,9 @@ class Registration(unittest.TestCase):
         self.driver = webdriver.Firefox()
 
     def test_register_a_new_account_happy_path(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #11
+        """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
         self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
@@ -38,8 +43,201 @@ class Registration(unittest.TestCase):
         username_in_test = parser.get('SectionOne', 'first_name') + ' ' + parser.get('SectionOne', 'last_name')
         assert element.text == username_in_test + ', welcome to your new IMDb account!'
 
+    def test_register_a_new_account_invalid_year_of_birth(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #4
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys("BAD YEAR")
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#year + .reg_error")  # sibling combinator
+        assert element.text == 'Please use YYYY format'
+
+
+    def test_register_a_new_account_invalid_gender(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #3
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        # self.driver.find_element_by_id("gender_m").click() leave this unselected
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#gender_m ~ .reg_error")  # general sibling combinator
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_invalid_zip(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #5
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys("BAD ZIP")
+        self.driver.find_element_by_id("email").send_keys(self.random_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#postal + .reg_error")
+        assert element.text == 'Please enter a 5 digit zip code'
+
+
+    def test_register_a_new_account_blank_email(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #6
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        # self.driver.find_element_by_id("email").send_keys(self.random_email_address()) leave this unentered
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#email + .reg_error")
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_bad_email(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #7
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_bad_email_address())
+        # self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password')) leave this unentered
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#password1 + .reg_error")
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_blank_first_name(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #1
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        # self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#first_name + .reg_error")
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_blank_last_name(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #2
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        # self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#last_name + .reg_error")
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_blank_email(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #8
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_email_address())
+        # self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password')) leave this unentered
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#password1 + .reg_error")
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_blank_second_password(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #9
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_bad_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'password'))
+        # self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element = self.driver.find_element_by_css_selector("#password2 + .reg_error")
+        assert element.text == 'Required'
+
+
+    def test_register_a_new_account_invalid_first_password(self):
+        """
+        Registration Tab In test_cases.ods - Test Case #10
+        """
+        self.driver.get(parser.get('SectionOne', 'url_in_test'))
+        self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
+        self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
+        self.driver.find_element_by_id("gender_m").click()
+        self.driver.find_element_by_id("year").send_keys(parser.get('SectionOne', 'year'))
+        self.select_dropdown_option(self.driver, "country", parser.get('SectionOne', 'country'))
+        self.driver.find_element_by_id("postal").send_keys(parser.get('SectionOne', 'zip'))
+        self.driver.find_element_by_id("email").send_keys(self.random_bad_email_address())
+        self.driver.find_element_by_id("password1").send_keys(parser.get('SectionOne', 'bad_password'))
+        self.driver.find_element_by_id("password2").send_keys(parser.get('SectionOne', 'password'))
+        self.driver.find_element_by_css_selector(".reg_right .btn2").click()
+        element_one = self.driver.find_element_by_css_selector("#password1 + .reg_error")
+        assert element_one.text == 'Password must be at least 8 characters'
+        element_two = self.driver.find_element_by_css_selector("#password2 + .reg_error")
+        assert element_two.text == 'Passwords must match'
+
+
     def tearDown(self):
         self.driver.close()
+
 
     def select_dropdown_option(self, driver, select_locator, option_text):
         """
@@ -51,11 +249,20 @@ class Registration(unittest.TestCase):
                 option.click()
                 break
 
+
     def random_email_address(self):
         """
         Returns a randomly generated email address.
         """
-        return "robbie" + str(randrange(100,999)) + "@mailinator.com"
+        return "robbie" + str(randrange(100, 999)) + "@mailinator.com"
+
+
+    def random_bad_email_address(self):
+        """
+        Returns a randomly generated bad email address.
+        """
+        return "robbie" + str(randrange(100, 999)) + "mailinator.com"
+
 
     def ConfigSectionMap(section):
         dict1 = {}
@@ -69,6 +276,7 @@ class Registration(unittest.TestCase):
                 print("exception on %s!" % option)
                 dict1[option] = None
         return dict1
+
 
 if __name__ == "__main__":
     unittest.main()
