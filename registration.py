@@ -22,7 +22,7 @@ class Registration(unittest.TestCase):
         """
         self.driver = webdriver.Firefox()
 
-    def test_register_a_new_account(self):
+    def test_register_a_new_account_happy_path(self):
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
         self.driver.find_element_by_id("last_name").send_keys(parser.get('SectionOne', 'last_name'))
