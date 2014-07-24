@@ -1,7 +1,7 @@
 import unittest
 from random import randrange  # let's not import the entire module
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.keys import Keys # The Keys class provide keys in the keyboard like RETURN, F1, ALT etc.
 from ConfigParser import SafeConfigParser
 
 parser = SafeConfigParser()
@@ -26,7 +26,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_happy_path(self):
         """
-        Registration Tab In test_cases.ods - Test Case #11
+        Registration Tab In test_cases.ods - Test Case #reg_011
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -45,7 +45,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_invalid_year_of_birth(self):
         """
-        Registration Tab In test_cases.ods - Test Case #4
+        Registration Tab In test_cases.ods - Test Case #reg_004
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -64,7 +64,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_invalid_gender(self):
         """
-        Registration Tab In test_cases.ods - Test Case #3
+        Registration Tab In test_cases.ods - Test Case #reg_003
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -83,7 +83,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_invalid_zip(self):
         """
-        Registration Tab In test_cases.ods - Test Case #5
+        Registration Tab In test_cases.ods - Test Case #reg_005
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -102,7 +102,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_blank_email(self):
         """
-        Registration Tab In test_cases.ods - Test Case #6
+        Registration Tab In test_cases.ods - Test Case #reg_006
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -121,7 +121,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_bad_email(self):
         """
-        Registration Tab In test_cases.ods - Test Case #7
+        Registration Tab In test_cases.ods - Test Case #reg_007
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -159,7 +159,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_blank_last_name(self):
         """
-        Registration Tab In test_cases.ods - Test Case #2
+        Registration Tab In test_cases.ods - Test Case #reg_002
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -178,7 +178,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_blank_email(self):
         """
-        Registration Tab In test_cases.ods - Test Case #8
+        Registration Tab In test_cases.ods - Test Case #reg_008
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -197,7 +197,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_blank_second_password(self):
         """
-        Registration Tab In test_cases.ods - Test Case #9
+        Registration Tab In test_cases.ods - Test Case #reg_009
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -216,7 +216,7 @@ class Registration(unittest.TestCase):
 
     def test_register_a_new_account_invalid_first_password(self):
         """
-        Registration Tab In test_cases.ods - Test Case #10
+        Registration Tab In test_cases.ods - Test Case #reg_010
         """
         self.driver.get(parser.get('SectionOne', 'url_in_test'))
         self.driver.find_element_by_id("first_name").send_keys(parser.get('SectionOne', 'first_name'))
@@ -236,7 +236,7 @@ class Registration(unittest.TestCase):
 
 
     def tearDown(self):
-        self.driver.close()
+        self.driver.close() #The quit will exit entire browser, where as close will close a tab, but if it is just one tab, by default most browser will exit entirely
 
 
     def select_dropdown_option(self, driver, select_locator, option_text):
@@ -278,5 +278,6 @@ class Registration(unittest.TestCase):
         return dict1
 
 
-if __name__ == "__main__":
-    unittest.main()
+if __name__ == "__main__": #Final lines are some boiler plate code to run the test suite
+    unittest.main() #http://stackoverflow.com/questions/419163/what-does-if-name-main-do
+    # magic methods
