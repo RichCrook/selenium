@@ -1,7 +1,20 @@
 selenium
 ========
 
+State any assumptions and/or additional details needed for proper testing
+
 java -jar selenium-server-standalone-2.42.jar -port 4444
+
+Installed with:
+http://selenium-python.readthedocs.org/installation.html
+
+Using:
+
+Darwin Richards-MacBook-Pro.local 13.3.0 Darwin Kernel Version 13.3.0: Tue Jun  3 21:27:35 PDT 2014; root:xnu-2422.110.17~1/RELEASE_X86_64 x86_64
+
+
+State any assumptions and/or additional details needed for proper testing
+
 
 Test Planning 
 Test Planning is one of the keys to project success: 
